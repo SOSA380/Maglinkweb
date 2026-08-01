@@ -2,12 +2,11 @@
 (function () {
   'use strict';
 
-  // El manifiesto debe estar en un repositorio público o detrás de una API
-  // pública de Vercel. Nunca pongas acá un token de GitHub.
+  // La web usa su propio manifiesto público. Nunca pongas acá un token de
+  // GitHub: la app y la web tienen vías de actualización separadas.
   var CONFIG = {
-    // Vercel lee el version.json oficial del repo OTA sin exponer el token.
-    // El archivo local queda como respaldo para probar la web sin la función.
-    manifestUrls: ['api/version', 'version.json'],
+    // Este archivo se publica junto con la web en Maglinkweb.
+    manifestUrls: ['version.json'],
     fallback: {
       versionName: '2.4.1',
       versionCode: 70,
@@ -66,7 +65,7 @@
         setManifest(data, true);
         return;
       } catch (_) {
-        // Probá el siguiente origen: API privada de Vercel y luego respaldo local.
+        // Si el manifiesto público no está disponible, se usa el respaldo.
       }
     }
     setManifest(CONFIG.fallback, false);

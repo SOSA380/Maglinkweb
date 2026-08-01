@@ -17,19 +17,9 @@ tokens.
 
 ## Configuración de Vercel
 
-La web consulta `api/version.js`. Esa función lee el `version.json` oficial del
-repo OTA privado sin exponer credenciales en el navegador. En el proyecto de
-Vercel configurá estas variables de entorno (Production y Preview si querés
-probarlo allí):
-
-```text
-GITHUB_OTA_READ_TOKEN=token_de_lectura_del_repo
-GITHUB_OTA_REPO=SOSA380/MaglinkUpdate
-```
-
-El token debe tener únicamente permiso de lectura de Contents. No lo guardes en
-`index.html`, `main.js` ni en el repositorio de la web. Durante una prueba local,
-si la función no está disponible, la página usa `version.json` como respaldo.
+La web es estática y no necesita variables secretas ni funciones serverless.
+Vercel solo debe apuntar a la raíz de este repositorio (`.`), con preset
+`Other`, sin build command y sin output directory.
 
 El manifiesto público debe tener, como mínimo:
 
@@ -42,20 +32,20 @@ El manifiesto público debe tener, como mínimo:
 }
 ```
 
-El repositorio del manifiesto y el asset de descarga tienen que ser públicos para que cualquier
-persona pueda descargarlo sin exponer un token. Si el manifiesto se mantiene
-privado, hace falta una función de Vercel que lo lea con una variable secreta;
-el APK igualmente debe estar disponible en una URL pública o en un CDN. Nunca
-pongas un PAT en `index.html` o `main.js`.
+El `version.json` de la web y la URL del APK deben ser públicos. El navegador no
+puede descargar un asset privado de GitHub sin un token, y nunca se debe poner
+un PAT en `index.html` o `main.js`.
 
 ## Publicación
 
 La APK se publica en GitHub Releases mediante el flujo privado de release. La
-web no recibe APK por un endpoint público: las funciones serverless tienen
-límites de tamaño y no deben convertirse en un proxy de archivos grandes.
-Después de publicar una nueva versión, `tool/publish.py` actualiza el
-`version.json` del repo OTA. No hace falta editar el manifiesto de esta web ni
-volver a desplegarla: la función de Vercel lo leerá en el siguiente acceso.
+app continúa usando el `version.json` de `SOSA380/MaglinkUpdate`. La web usa su
+propia copia pública en este repositorio: después de cada release hay que
+actualizar ambos manifiestos con los mismos datos y publicar el cambio de la
+web. No hay que tocar Vercel ni agregar variables.
+
+En la copia de la web se deben actualizar `versionName`, `versionCode`,
+`apkUrl`, `apkSha256` y `notes`. `apkUrl` debe ser una URL HTTPS pública.
 
 Podés desplegar `web/` como sitio estático en GitHub Pages o como proyecto
 estático en Vercel. El enlace que se entrega para Downloader debe ser siempre la
