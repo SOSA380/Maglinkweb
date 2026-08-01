@@ -47,6 +47,17 @@ web. No hay que tocar Vercel ni agregar variables.
 En la copia de la web se deben actualizar `versionName`, `versionCode`,
 `apkUrl`, `apkSha256` y `notes`. `apkUrl` debe ser una URL HTTPS pública.
 
+Desde el proyecto principal, `tool/publish_web.py` automatiza la parte pública:
+
+```bash
+GITHUB_WEB_TOKEN=... python3 tool/publish_web.py
+```
+
+Lee la APK release compilada, crea o actualiza el Release público de
+`SOSA380/Maglinkweb`, sube `magplayer.apk` y actualiza el `version.json` público
+con la URL y el SHA-256 correctos. La publicación OTA privada se hace aparte
+con `tool/publish.py`.
+
 Podés desplegar `web/` como sitio estático en GitHub Pages o como proyecto
 estático en Vercel. El enlace que se entrega para Downloader debe ser siempre la
 URL estable de este sitio, no la URL cambiante del APK.
