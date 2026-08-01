@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MagPlayer+ · Descarga oficial</title>
+  <meta name="description" content="Descargá MagPlayer+ cuando lo necesites y verificá cualquier APK sin subirlo." />
+  <meta id="theme-color-meta" name="theme-color" content="#070912" />
+  <link rel="icon" type="image/png" href="assets/logo.png" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('magplayer-theme');
+        if (!t) t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        document.documentElement.dataset.theme = t;
+      } catch (_) { document.documentElement.dataset.theme = 'dark'; }
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { theme: { extend: {
+      fontFamily: { sans: ['Manrope', 'system-ui', 'sans-serif'], mono: ['DM Mono', 'monospace'] },
+      colors: { ink: 'var(--text)', soft: 'var(--soft)', muted: 'var(--muted)', night: 'var(--bg)', panel: 'var(--panel)', line: 'var(--line)', mint: '#55E6C1', blue: '#6E7BFF' },
+      borderRadius: { pill: '999px' },
+    } } };
+  </script>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="font-sans antialiased">
+  <div class="ambient" aria-hidden="true"></div>
+  <header class="topbar">
+    <nav class="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
+      <a href="#inicio" class="brand" aria-label="MagPlayer+ inicio">
+        <img src="assets/logo.png" alt="" />
+        <span>Mag<span>Player+</span></span>
+      </a>
+      <div class="flex items-center gap-2">
+        <a class="nav-link hidden sm:inline-flex" href="#verificar">Verificar APK</a>
+        <button id="theme-toggle" class="icon-button" type="button" aria-label="Cambiar tema">
+          <span aria-hidden="true">◐</span>
+        </button>
+        <a class="button button-primary" href="#descargar">Descargar</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="inicio" class="mx-auto max-w-6xl px-5">
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="live-dot"></span> Sitio oficial de MagStudios</p>
+        <h1>Tu reproductor.<br /><em>Tu contenido.</em></h1>
+        <p class="hero-lead">MagPlayer+ reproduce tus listas personales y tus archivos de video locales en celular, Android TV y TV Box.</p>
+        <div class="hero-actions" id="descargar">
+          <a id="download-button" class="button button-primary button-large" href="#">
+            <span aria-hidden="true">↓</span> Descargar última versión
+          </a>
+          <a class="button button-quiet button-large" href="#verificar">Verificar un APK <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="release-line" aria-live="polite">
+          <span>Versión <strong id="version-name">consultando…</strong></span>
+          <span class="separator">·</span>
+          <span id="release-status">Buscando publicación oficial</span>
+        </div>
+      </div>
+      <div class="hero-card" aria-label="Estado de la publicación">
+        <div class="hero-card-top"><span>RELEASE / LATEST</span><span id="release-code">—</span></div>
+        <div class="signal"><span></span><span></span><span></span><span></span><span></span></div>
+        <div class="hero-card-title">Descargá solo<br /><strong>cuando lo necesites.</strong></div>
+        <p>Si la app ya está instalada, podés actualizarla desde Ajustes. Esta web queda como alternativa para instalaciones nuevas o bloqueos del sistema.</p>
+        <div class="hero-card-bottom"><span class="status-chip"><i></i> hash verificable</span><span>MagStudios</span></div>
+      </div>
+    </section>
+
+    <section class="trust-strip" aria-label="Garantías del sitio">
+      <div><span class="strip-icon">↗</span><span><strong>Descarga alternativa</strong><small>Para instalaciones nuevas o bloqueos</small></span></div>
+      <div><span class="strip-icon">#</span><span><strong>SHA-256</strong><small>Comprobación local</small></span></div>
+      <div><span class="strip-icon">◈</span><span><strong>Sin registro</strong><small>No guardamos tu APK</small></span></div>
+    </section>
+
+    <section class="section-block" id="verificar">
+      <div class="section-heading"><p class="eyebrow">COMPROBACIÓN</p><h2>¿Es la versión oficial?</h2><p>Elegí un APK desde tu dispositivo. El archivo se analiza en tu navegador y nunca se sube a la web.</p></div>
+      <div class="verify-layout">
+        <label class="dropzone" id="dropzone" for="apk-file" tabindex="0">
+          <input id="apk-file" type="file" accept=".apk,application/vnd.android.package-archive" />
+          <span class="drop-icon">⌁</span>
+          <strong>Soltá el APK acá</strong>
+          <span>o tocá para elegir un archivo</span>
+          <small>El cálculo puede tardar unos segundos en archivos grandes.</small>
+        </label>
+        <div class="verify-result" id="verify-result" aria-live="polite">
+          <div class="result-placeholder"><span>01</span><p>Seleccioná un APK para comparar su huella con la publicación oficial.</p></div>
+        </div>
+      </div>
+      <div class="hash-row"><span>Hash oficial publicado</span><code id="official-hash">consultando…</code><button id="copy-hash" class="copy-button" type="button" disabled>Copiar</button></div>
+      <p class="fine-print">Coincidir con el hash confirma que el archivo es idéntico a esa publicación. Un hash distinto puede indicar una copia modificada, una versión diferente o un archivo dañado.</p>
+    </section>
+
+    <section class="section-block compact-grid">
+      <article class="feature-card"><span class="feature-number">01</span><h3>Listas personales</h3><p>Importá tus listas M3U, M3U8, JSON o TXT y elegí cuál reproducir.</p></article>
+      <article class="feature-card"><span class="feature-number">02</span><h3>Archivos locales</h3><p>Abrí tus videos desde el dispositivo y continuá desde donde los dejaste.</p></article>
+      <article class="feature-card"><span class="feature-number">03</span><h3>Controles para TV</h3><p>Navegación D-Pad, pantalla completa y controles pensados para Android TV.</p></article>
+    </section>
+
+    <section class="steps-block">
+      <div class="section-heading"><p class="eyebrow">DESCARGA OPCIONAL</p><h2>Actualizá desde la app cuando puedas.</h2><p>No es obligatorio descargar el APK en cada actualización. Si MagPlayer+ funciona con normalidad, abrí Ajustes y actualizá desde allí; esta web está pensada para quienes todavía no tienen la app o no pueden actualizar por bloqueos del sistema.</p></div>
+      <div class="steps"><div><b>01</b><h3>Si ya tenés la app</h3><p>Entrá a Ajustes y usá el actualizador integrado.</p></div><div><b>02</b><h3>Si necesitás esta web</h3><p>Ingresá la dirección oficial desde Downloader y descargá la publicación vigente.</p></div><div><b>03</b><h3>Instalá encima</h3><p>No hace falta borrar la versión anterior: instalá la nueva sobre la actual.</p></div></div>
+    </section>
+  </main>
+
+  <footer class="footer"><div class="mx-auto flex max-w-6xl flex-col gap-5 px-5 py-8 sm:flex-row sm:items-center sm:justify-between"><div class="brand"><img src="assets/logo.png" alt="" /><span>Mag<span>Player+</span></span></div><div class="footer-links"><a href="legal.html">Información legal</a><a href="https://t.me/+_eYW7k6-v51lYmQ5" target="_blank" rel="noopener">Telegram</a><span>© <span id="year"></span> MagStudios</span></div></div></footer>
+  <div id="toast" class="toast" role="status"></div>
+  <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,143 @@
+/* Sitio público de MagPlayer+. No contiene tokens ni credenciales. */
+(function () {
+  'use strict';
+
+  // El manifiesto debe estar en un repositorio público o detrás de una API
+  // pública de Vercel. Nunca pongas acá un token de GitHub.
+  var CONFIG = {
+    // Vercel lee el version.json oficial del repo OTA sin exponer el token.
+    // El archivo local queda como respaldo para probar la web sin la función.
+    manifestUrls: ['api/version', 'version.json'],
+    fallback: {
+      versionName: '2.4.1',
+      versionCode: 70,
+      apkUrl: 'https://github.com/SOSA380/MaglinkUpdate/releases/latest/download/maglinktv.apk',
+      apkSha256: '13a2ca8219258304b5ddb0ea79f255e2127497f95febb3a9eb803d7511a26be3',
+    },
+  };
+  var manifest = null;
+
+  function byId(id) { return document.getElementById(id); }
+  function setText(id, value) { var node = byId(id); if (node) node.textContent = value; }
+  function isSha(value) { return typeof value === 'string' && /^[0-9a-f]{64}$/i.test(value); }
+  function showToast(message) {
+    var toast = byId('toast');
+    if (!toast) return;
+    toast.textContent = message;
+    toast.classList.add('show');
+    window.clearTimeout(showToast.timer);
+    showToast.timer = window.setTimeout(function () { toast.classList.remove('show'); }, 2400);
+  }
+
+  function applyTheme(theme) {
+    document.documentElement.dataset.theme = theme;
+    var meta = byId('theme-color-meta');
+    if (meta) meta.setAttribute('content', theme === 'light' ? '#F4F7FB' : '#070912');
+    try { localStorage.setItem('magplayer-theme', theme); } catch (_) {}
+  }
+
+  function setManifest(value, fromNetwork) {
+    var data = value || CONFIG.fallback;
+    var valid = data && typeof data.apkUrl === 'string' && /^https:\/\//i.test(data.apkUrl) &&
+      typeof data.versionName === 'string' && data.versionName.trim();
+    if (!valid) data = CONFIG.fallback;
+    manifest = data;
+    setText('version-name', data.versionName);
+    setText('release-code', data.versionCode ? 'BUILD ' + data.versionCode : '—');
+    setText('official-hash', isSha(data.apkSha256) ? data.apkSha256.toLowerCase() : 'No publicado todavía');
+    setText('release-status', fromNetwork ? 'Publicación verificada' : 'Usando datos de respaldo');
+    var button = byId('download-button');
+    if (button) {
+      button.href = data.apkUrl;
+      button.target = '_blank';
+      button.rel = 'noopener';
+    }
+    var copy = byId('copy-hash');
+    if (copy) copy.disabled = !isSha(data.apkSha256);
+  }
+
+  async function loadManifest() {
+    var urls = CONFIG.manifestUrls || [];
+    for (var i = 0; i < urls.length; i += 1) {
+      try {
+        var response = await fetch(urls[i] + '?t=' + Date.now(), { cache: 'no-store' });
+        if (!response.ok) throw new Error('manifest ' + response.status);
+        var data = await response.json();
+        setManifest(data, true);
+        return;
+      } catch (_) {
+        // Probá el siguiente origen: API privada de Vercel y luego respaldo local.
+      }
+    }
+    setManifest(CONFIG.fallback, false);
+    setText('release-status', 'No se pudo consultar la publicación');
+  }
+
+  function bytesToHex(buffer) {
+    return Array.prototype.map.call(new Uint8Array(buffer), function (byte) {
+      return byte.toString(16).padStart(2, '0');
+    }).join('');
+  }
+
+  async function hashFile(file) {
+    if (!window.crypto || !window.crypto.subtle) throw new Error('El navegador no permite SHA-256 seguro.');
+    // Se calcula en el navegador: el archivo no sale del dispositivo. Para
+    // APK normales esta ruta evita enviar datos personales a un servidor.
+    return bytesToHex(await window.crypto.subtle.digest('SHA-256', await file.arrayBuffer()));
+  }
+
+  function showVerification(file, hash) {
+    var result = byId('verify-result');
+    if (!result) return;
+    var official = manifest && isSha(manifest.apkSha256) ? manifest.apkSha256.toLowerCase() : '';
+    var matches = official && hash === official;
+    result.innerHTML = '<div class="result-card ' + (matches ? 'ok' : 'bad') + '">' +
+      '<span class="file-name">' + escapeHtml(file.name) + '</span>' +
+      '<h3>' + (matches ? '✓ Coincide con la versión oficial' : '× No coincide con esta versión') + '</h3>' +
+      '<p>' + (matches ? 'El archivo es idéntico al APK publicado para MagPlayer+ ' + escapeHtml(manifest.versionName) + '.' : 'El archivo puede ser una copia modificada, una versión diferente o estar dañado. No lo instales sin verificar su origen.') + '</p>' +
+      '<div class="computed-hash">' + hash + '</div>' +
+      '</div>';
+  }
+
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, function (char) {
+      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' })[char];
+    });
+  }
+
+  async function verify(file) {
+    if (!file) return;
+    var result = byId('verify-result');
+    if (result) result.innerHTML = '<div class="result-card"><span class="file-name">' + escapeHtml(file.name) + '</span><h3>Calculando SHA-256…</h3><p>El archivo permanece en tu dispositivo.</p></div>';
+    try {
+      var hash = await hashFile(file);
+      showVerification(file, hash);
+    } catch (error) {
+      if (result) result.innerHTML = '<div class="result-card bad"><h3>No se pudo verificar</h3><p>' + escapeHtml(error.message) + '</p></div>';
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    setText('year', String(new Date().getFullYear()));
+    applyTheme(document.documentElement.dataset.theme || 'dark');
+    var theme = byId('theme-toggle');
+    if (theme) theme.addEventListener('click', function () { applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'); });
+
+    var input = byId('apk-file');
+    var zone = byId('dropzone');
+    if (input) input.addEventListener('change', function () { verify(input.files && input.files[0]); });
+    if (zone) {
+      ['dragenter', 'dragover'].forEach(function (name) { zone.addEventListener(name, function (event) { event.preventDefault(); zone.classList.add('is-dragging'); }); });
+      ['dragleave', 'drop'].forEach(function (name) { zone.addEventListener(name, function (event) { event.preventDefault(); zone.classList.remove('is-dragging'); }); });
+      zone.addEventListener('drop', function (event) { verify(event.dataTransfer.files && event.dataTransfer.files[0]); });
+      zone.addEventListener('keydown', function (event) { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); input && input.click(); } });
+    }
+    var copy = byId('copy-hash');
+    if (copy) copy.addEventListener('click', function () {
+      var hash = manifest && manifest.apkSha256;
+      if (!isSha(hash)) return;
+      navigator.clipboard.writeText(hash).then(function () { showToast('Hash copiado'); });
+    });
+    loadManifest();
+  });
+})();
