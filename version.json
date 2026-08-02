@@ -1,7 +1,7 @@
 {
-  "versionName": "2.4.1",
-  "versionCode": 70,
-  "apkUrl": "https://github.com/SOSA380/Maglinkweb/releases/download/v2.4.1/magplayer.apk",
-  "apkSha256": "13a2ca8219258304b5ddb0ea79f255e2127497f95febb3a9eb803d7511a26be3",
-  "notes": "Última versión oficial publicada."
+  "versionName": "2.4.2",
+  "versionCode": 71,
+  "apkUrl": "https://github.com/SOSA380/Maglinkweb/releases/download/v2.4.2/magplayer.apk",
+  "apkSha256": "a8054a9a43f60b88a354976d1c66fbd19e75dcbb28654420081e167b59e8409b",
+  "notes": "🎉 MagPlayer+ 2.4.2\n\n✅ Se corrigió la escritura y navegación de URLs de listas mediante D-pad y\n   teclado en Android TV.\n✅ El reproductor ahora ofrece más opciones: velocidad, relación de aspecto,\n   calidad, audio, subtítulos y cambio de fuente.\n✅ Se corrigió el buscador para que funcione con listas grandes sin construir\n   todos los resultados de golpe.\n✅ Se corrigió la visualización y selección de favoritos.\n✅ Se incorporó Picture-in-Picture para celulares y tablets, tanto en videos\n   locales como en videos de las listas compatibles.\n✅ MagPlayer+ es compatible con videos locales en los formatos admitidos por\n   el dispositivo.\n✅ Ahora hay un sitio web oficial para descargar la APK y comparar su\n   autenticidad mediante el hash publicado.\n\nMagPlayer+ continúa siendo un reproductor de listas personales y archivos\nlocales. La aplicación no aloja ni distribuye contenido."
 }
