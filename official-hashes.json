@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "versions": [
+    {
+      "versionName": "2.2.9",
+      "versionCode": 57,
+      "sha256": "ed0325826e3220b207f41f8d4d0e1a41c4f9a2b4eb14a37622a0d583cd6cf999"
+    },
+    {
+      "versionName": "2.3.5",
+      "versionCode": 64,
+      "sha256": "9d8e6cb3bfe48c02dffbccf5ce45022b5d8bdd822fc08225ef657f94904dc787"
+    },
+    {
+      "versionName": "2.3.6",
+      "versionCode": 65,
+      "sha256": "08908c82136ce3b9ccf33a235f74db053423594456d729350d3f7b1836880495"
+    },
+    {
+      "versionName": "2.3.7",
+      "versionCode": 66,
+      "sha256": "84f4e86fec73ee92af5bf357cbf62a49d9b89760a7122b24dc35fda29baa51dc"
+    },
+    {
+      "versionName": "2.3.8",
+      "versionCode": 67,
+      "sha256": "bc1802c2f14f5755b1d3124753dcbc96a02cbb7fe89fde017d2ed033739b70a2"
+    },
+    {
+      "versionName": "2.3.9",
+      "versionCode": 68,
+      "sha256": "64c7929b0f0f63721a80cd03a51ba93042d753abf09cbf5740abc2f815219e1c"
+    },
+    {
+      "versionName": "2.4.0",
+      "versionCode": 69,
+      "sha256": "0c96d2455a6066a5aee0e6e3621980e6175072b709fc66bdd4c769dc7f383dcf"
+    },
+    {
+      "versionName": "2.4.1",
+      "versionCode": 70,
+      "sha256": "13a2ca8219258304b5ddb0ea79f255e2127497f95febb3a9eb803d7511a26be3"
+    },
+    {
+      "versionName": "2.4.2",
+      "versionCode": 71,
+      "sha256": "a8054a9a43f60b88a354976d1c66fbd19e75dcbb28654420081e167b59e8409b"
+    }
+  ]
+}
