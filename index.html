@@ -29,9 +29,7 @@
   </script>
   <link rel="stylesheet" href="css/styles.css" />
   <style>
-    .release-notes { max-width: 40rem; margin-top: 1.7rem; padding: 1rem 1.1rem; border: 1px solid var(--line); border-radius: .85rem; background: var(--panel); }
-    .release-notes .eyebrow { margin: 0; }
-    .release-notes > div { margin-top: .55rem; color: var(--soft); font-size: .78rem; line-height: 1.75; white-space: pre-line; }
+    .release-notes-copy { margin-top: 1rem; padding: 1rem 1.1rem; border: 1px solid var(--line); border-radius: .85rem; background: var(--panel); color: var(--soft); font-size: .78rem; line-height: 1.75; white-space: pre-line; }
   </style>
 </head>
 <body class="font-sans antialiased">
@@ -69,10 +67,6 @@
           <span class="separator">·</span>
           <span id="release-status">Buscando publicación oficial</span>
         </div>
-        <section class="release-notes" aria-live="polite" aria-labelledby="release-notes-title">
-          <p class="eyebrow" id="release-notes-title">NOVEDADES</p>
-          <div id="release-notes">Cargando nota de actualización…</div>
-        </section>
       </div>
       <div class="hero-card" aria-label="Estado de la publicación">
         <div class="hero-card-top"><span>RELEASE / LATEST</span><span id="release-code">—</span></div>
@@ -87,6 +81,14 @@
       <div><span class="strip-icon">↗</span><span><strong>Descarga alternativa</strong><small>Para instalaciones nuevas o bloqueos</small></span></div>
       <div><span class="strip-icon">#</span><span><strong>SHA-256</strong><small>Comprobación local</small></span></div>
       <div><span class="strip-icon">◈</span><span><strong>Sin registro</strong><small>No guardamos tu APK</small></span></div>
+    </section>
+
+    <section class="section-block release-notes-section" aria-live="polite" aria-labelledby="release-notes-title">
+      <div class="section-heading">
+        <p class="eyebrow" id="release-notes-title">NOVEDADES</p>
+        <h2>Qué cambió en la última versión.</h2>
+        <p id="release-notes" class="release-notes-copy">Cargando nota de actualización…</p>
+      </div>
     </section>
 
     <section class="section-block" id="verificar">
