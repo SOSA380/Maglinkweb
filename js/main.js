@@ -39,6 +39,24 @@
     try { localStorage.setItem('magplayer-theme', theme); } catch (_) {}
   }
 
+  function installBrowserShortcutDeterrents() {
+    // Disuasión básica para la navegación casual. Esto no es una medida de
+    // seguridad: las herramientas del navegador siempre pueden reactivarse.
+    document.addEventListener('contextmenu', function (event) {
+      event.preventDefault();
+    });
+    document.addEventListener('keydown', function (event) {
+      var key = String(event.key || '').toLowerCase();
+      var modifier = event.ctrlKey || event.metaKey;
+      var shiftDevtools = modifier && event.shiftKey && ['i', 'j', 'c', 'k'].indexOf(key) !== -1;
+      var viewSource = modifier && key === 'u';
+      if (key === 'f12' || shiftDevtools || viewSource) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    }, true);
+  }
+
   function setManifest(value, fromNetwork) {
     var data = value || CONFIG.fallback;
     var valid = data && typeof data.apkUrl === 'string' && /^https:\/\//i.test(data.apkUrl) &&
@@ -156,6 +174,7 @@
   document.addEventListener('DOMContentLoaded', function () {
     setText('year', String(new Date().getFullYear()));
     applyTheme(document.documentElement.dataset.theme || 'dark');
+    installBrowserShortcutDeterrents();
     var theme = byId('theme-toggle');
     if (theme) theme.addEventListener('click', function () { applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'); });
 
