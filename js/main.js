@@ -48,6 +48,9 @@
     setText('version-name', data.versionName);
     setText('release-code', data.versionCode ? 'BUILD ' + data.versionCode : '—');
     setText('official-hash', isSha(data.apkSha256) ? data.apkSha256.toLowerCase() : 'No publicado todavía');
+    setText('release-notes', typeof data.notes === 'string' && data.notes.trim()
+      ? data.notes
+      : 'No hay una nota de actualización publicada.');
     setText('release-status', fromNetwork ? 'Publicación verificada' : 'Usando datos de respaldo');
     var button = byId('download-button');
     if (button) {
