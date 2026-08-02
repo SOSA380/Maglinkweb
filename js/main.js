@@ -72,7 +72,13 @@
     } catch (_) {
       // La comprobación de la última versión sigue disponible si el registro
       // histórico no responde.
-      officialVersions = [];
+      officialVersions = manifest && isSha(manifest.apkSha256)
+        ? [{
+            versionName: manifest.versionName,
+            versionCode: Number(manifest.versionCode),
+            sha256: manifest.apkSha256.toLowerCase(),
+          }]
+        : [];
     }
   }
 
