@@ -7,6 +7,9 @@
   var CONFIG = {
     // Este archivo se publica junto con la web en Maglinkweb.
     manifestUrls: ['version.json'],
+    // Registro técnico de APK oficiales. Se usa sólo para verificar archivos;
+    // la interfaz sigue mostrando únicamente el hash de la última versión.
+    hashesUrl: 'official-hashes.json',
     fallback: {
       versionName: '2.4.1',
       versionCode: 70,
@@ -15,6 +18,7 @@
     },
   };
   var manifest = null;
+  var officialVersions = [];
 
   function byId(id) { return document.getElementById(id); }
   function setText(id, value) { var node = byId(id); if (node) node.textContent = value; }
@@ -55,6 +59,23 @@
     if (copy) copy.disabled = !isSha(data.apkSha256);
   }
 
+  async function loadOfficialVersions() {
+    try {
+      var response = await fetch(CONFIG.hashesUrl + '?t=' + Date.now(), { cache: 'no-store' });
+      if (!response.ok) throw new Error('hashes ' + response.status);
+      var data = await response.json();
+      if (!data || !Array.isArray(data.versions)) throw new Error('registro inválido');
+      officialVersions = data.versions.filter(function (entry) {
+        return entry && typeof entry.versionName === 'string' &&
+          Number.isInteger(entry.versionCode) && isSha(entry.sha256);
+      });
+    } catch (_) {
+      // La comprobación de la última versión sigue disponible si el registro
+      // histórico no responde.
+      officialVersions = [];
+    }
+  }
+
   async function loadManifest() {
     var urls = CONFIG.manifestUrls || [];
     for (var i = 0; i < urls.length; i += 1) {
@@ -63,12 +84,14 @@
         if (!response.ok) throw new Error('manifest ' + response.status);
         var data = await response.json();
         setManifest(data, true);
+        await loadOfficialVersions();
         return;
       } catch (_) {
         // Si el manifiesto público no está disponible, se usa el respaldo.
       }
     }
     setManifest(CONFIG.fallback, false);
+    await loadOfficialVersions();
     setText('release-status', 'No se pudo consultar la publicación');
   }
 
@@ -88,12 +111,17 @@
   function showVerification(file, hash) {
     var result = byId('verify-result');
     if (!result) return;
-    var official = manifest && isSha(manifest.apkSha256) ? manifest.apkSha256.toLowerCase() : '';
-    var matches = official && hash === official;
+    var match = officialVersions.find(function (entry) {
+      return entry && typeof entry.sha256 === 'string' && entry.sha256.toLowerCase() === hash;
+    });
+    var matches = Boolean(match);
+    var releaseLabel = match
+      ? 'MagPlayer+ ' + escapeHtml(match.versionName) + ' (BUILD ' + escapeHtml(match.versionCode) + ')'
+      : '';
     result.innerHTML = '<div class="result-card ' + (matches ? 'ok' : 'bad') + '">' +
       '<span class="file-name">' + escapeHtml(file.name) + '</span>' +
-      '<h3>' + (matches ? '✓ Coincide con la versión oficial' : '× No coincide con esta versión') + '</h3>' +
-      '<p>' + (matches ? 'El archivo es idéntico al APK publicado para MagPlayer+ ' + escapeHtml(manifest.versionName) + '.' : 'El archivo puede ser una copia modificada, una versión diferente o estar dañado. No lo instales sin verificar su origen.') + '</p>' +
+      '<h3>' + (matches ? '✓ APK oficial verificado' : '× No coincide con una versión oficial') + '</h3>' +
+      '<p>' + (matches ? 'El archivo corresponde a ' + releaseLabel + '.' : 'El archivo puede ser una copia modificada, una versión diferente o estar dañado. No lo instales sin verificar su origen.') + '</p>' +
       '<div class="computed-hash">' + hash + '</div>' +
       '</div>';
   }
